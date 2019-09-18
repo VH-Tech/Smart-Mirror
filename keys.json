@@ -1,0 +1,27 @@
+{
+  "watson_url":"",
+  "iam_apikey":"",
+
+  "youtube_v3":"",
+  "google_image_search_url":"",
+
+  "rssfeeds" : "",
+
+  "darksky_url": "",
+
+   "": "Pusher Creadentials ahead --->>",
+
+  "app_id":"",
+  "key":"",
+  "secret":"",
+  "cluster":"",
+
+  "": "Houndify Creadentials ahead --->>",
+  "clientId" : "",
+  "clientKey" : "",
+
+  "": "your location ahead --->>",
+
+   "Latitude": ,
+   "Longitude": 
+}

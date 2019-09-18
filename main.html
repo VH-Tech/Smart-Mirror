@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<link rel="stylesheet" href="smart-mirror.css">
+<body>
+
+<div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+
+
+<div id="music_div">
+    <h4 id = "now_playing"></h4>
+<audio>
+
+</audio>
+
+
+</div>
+
+
+<div width="100px">
+    <canvas class="weather" id="weather_icon" width="128" height="128"></canvas>
+<br><br><br><br><br><br>
+
+        <h4 id="temperature" >30 &#8451; </h4>
+</div>
+
+<h1> <div id="rotate"> <div>awesome.</div> <div>invincible.</div> <div>unbeatable.</div> <div>indestructible.</div>
+  <div>pable</div></div> </h1>
+
+
+
+
+
+<div id="styling">
+    <h5>Trending Now</h5>
+<div id = "news"><div><div>Hi</div><div>yo</div></div></div>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div id="ModalContent">
+    <span class="close">&times;</span>
+  </div>
+</div>
+
+
+
+<script>
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+function showTime(){
+    var date = new Date();
+    var h = date.getHours(); // 0 - 23
+    var m = date.getMinutes(); // 0 - 59
+    var session = "AM";
+
+    if(h == 0){
+        h = 12;
+    }
+
+
+    h = (h < 10) ? "0" + h : h;
+    m = (m < 10) ? "0" + m : m;
+
+    var time = h + ":" + m;
+    document.getElementById("MyClockDisplay").innerText = time;
+    document.getElementById("MyClockDisplay").textContent = time;
+
+    setTimeout(showTime, 1000);
+
+}
+
+showTime();
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script id="rendered-js">
+(function($){
+    $.fn.extend({
+        rotaterator: function(options) {
+
+            var defaults = {
+                fadeSpeed: 50000,
+                pauseSpeed: 500,
+				child:null
+            };
+
+            var options = $.extend(defaults, options);
+
+            return this.each(function() {
+                  var o =options;
+                  var obj = $(this);
+                  var items = $(obj.children(), obj);
+				  items.each(function() {$(this).hide();})
+				  if(!o.child){var next = $(obj).children(':first');
+				  }else{var next = o.child;
+				  }
+				  $(next).fadeIn(o.fadeSpeed, function() {
+						$(next).delay(o.pauseSpeed).fadeOut(o.fadeSpeed, function() {
+							var next = $(this).next();
+							if (next.length == 0){
+									next = $(obj).children(':first');
+							}
+							$(obj).rotaterator({child : next, fadeSpeed : o.fadeSpeed, pauseSpeed : o.pauseSpeed});
+						})
+					});
+            });
+        }
+    });
+})(jQuery);
+
+ $(document).ready(function() {
+        $('#rotate').rotaterator({fadeSpeed:1000, pauseSpeed:5000});
+        $('#news').rotaterator({fadeSpeed:1000, pauseSpeed:10000});
+ });
+</script>
+
+<script src="https://js.pusher.com/4.4/pusher.min.js"></script>
+<script src="skycons.js"></script>
+
+
+<script>
+
+   function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+   var elem = document.documentElement;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }
+
+
+     var pusher = new Pusher('3500eb939cae3c90ef1d', {
+      cluster: 'ap2',
+      forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+
+    channel.bind('compliments', function(data) {
+      compliment =document.getElementById("rotate");
+      compliment.innerHTML="";
+      var i =0;
+      while(i < data.length){
+
+      var division = document.createElement("div");
+      division.innerHTML = data[i];
+      compliment.appendChild(division);
+      i++;
+      }
+
+    });
+
+
+    channel.bind('youtube', function(data) {
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = "<center><iframe style='right:40%;' id='ytplayer' type='text/html' src='https://www.youtube.com/embed/" + data[0] + "?autoplay=1&controls=0&color=white' frameborder='0' allowfullscreen width='500' height='250' ></iframe></center>"
+
+    modal.style.display = "block";
+    modal.style.backgroundColor = "black";
+
+    sleep(data[1]*1000).then(() => {
+    modal.style.display = "none";
+    });
+
+      });
+
+
+    channel.bind('images', function(data) {
+
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = "<center><img src='" + data+ "'></center>"
+
+    modal.style.display = "block";
+    modal.style.backgroundColor = "black";
+
+    sleep(10*1000).then(() => {
+    modal.style.display = "none";
+    });
+
+
+    });
+
+    channel.bind('image_clicked', function(data) {
+
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = "<center><img src='"+ data +".png'></center>"
+
+    modal.style.display = "block";
+    modal.style.backgroundColor = "black";
+
+    sleep(10*1000).then(() => {
+    modal.style.display = "none";
+
+    });
+
+    });
+
+
+    channel.bind('wiki', function(data) {
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = "<center><font size='5' color='white' face='cursive'>"+data[0]+"</font><br><br><br><br><br><img src='"+data[1]+"'></center>";
+
+    modal.style.display = "block";
+    modal.style.backgroundColor = "black";
+
+    sleep(24*1000).then(() => {
+    modal.style.display = "none";
+
+    });
+
+    });
+
+
+channel.bind('text', function(data) {
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = "<center><font size='5' color='white' face='cursive'>"+data+"</font></center>";
+
+    modal.style.display = "block";
+    modal.style.backgroundColor = "black";
+
+    sleep(15*1000).then(() => {
+    modal.style.display = "none";
+
+    });
+
+    });
+
+
+channel.bind('stop', function(data) {
+
+    var modal = document.getElementById("myModal");
+
+    var ModalContent = document.getElementById("ModalContent");
+    ModalContent.innerHTML = ""
+    modal.style.display = "none";
+
+    var x = document.getElementById("now_playing");
+    x.innerHTML= "";
+
+    });
+
+
+    channel.bind('news', function(data) {
+      news =document.getElementById("news");
+      news.innerHTML="";
+      var i =0;
+      while(i < data.length){
+
+      var division = document.createElement("div");
+      division.innerHTML = data[i];
+      news.appendChild(division);
+      i++;
+      }
+
+    });
+
+ channel.bind('music', function(data) {
+
+     var x = document.getElementById("now_playing");
+     x.innerHTML= "Now playing:<br>" + data.toString();
+     
+    });
+
+
+
+      var skycons = new Skycons({"color": "white"});
+  // on Android, a nasty hack is needed: {"resizeClear": true}
+
+  // you can add a canvas by it's ID...
+  skycons.add("weather_icon", );
+
+
+
+  skycons.play();
+/////////////////////////////////////////////////////////////////
+  channel.bind('weather', function(data) {
+
+
+
+switch (data[0]) {
+  case "FOG":
+   skycons.set("weather_icon", Skycons.FOG);
+    break;
+
+  case "RAIN":
+   skycons.set("weather_icon", Skycons.RAIN);
+    break;
+
+case "PARTLY_CLOUDY_DAY":
+   skycons.set("weather_icon", Skycons.PARTLY_CLOUDY_DAY);
+    break;
+
+case "PARTLY_CLOUDY_NIGHT":
+   skycons.set("weather_icon", Skycons.PARTLY_CLOUDY_NIGHT);
+    break;
+
+case "WIND":
+   skycons.set("weather_icon", Skycons.WIND);
+    break;
+
+case "SNOW":
+   skycons.set("weather_icon", Skycons.SNOW);
+    break;
+
+case "SLEET":
+   skycons.set("weather_icon", Skycons.SLEET);
+    break;
+
+case "CLOUDY":
+   skycons.set("weather_icon", Skycons.CLOUDY);
+    break;
+
+case "CLEAR_NIGHT":
+   skycons.set("weather_icon", Skycons.CLEAR_NIGHT);
+    break;
+
+case "CLEAR_DAY":
+   skycons.set("weather_icon", Skycons.CLEAR_DAY);
+    break;
+}
+
+
+temperature_label = document.getElementById("temperature")
+temperature_label.innerHTML = data[1] + "&#8451;";
+
+      });
+
+
+
+</script>
+
+
+</body>
+</html>
