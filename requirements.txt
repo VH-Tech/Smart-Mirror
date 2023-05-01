@@ -1,7 +1,7 @@
 darksky==0.3
 feedparser==5.2.1
 ffmpeg==1.4
-Flask==1.0.3
+Flask==2.3.2
 google-api-python-client==1.7.9
 google-auth==1.6.3
 google-auth-httplib2==0.0.3
