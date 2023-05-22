@@ -17,7 +17,7 @@ python-dateutil==2.6.1
 python-vlc==3.0.6109
 pyttsx==1.1
 pyttsx3==2.71
-requests==2.22.0
+requests==2.31.0
 SpeechRecognition==3.8.1
 tts-watson==1.0.0
 urllib3>=1.22
